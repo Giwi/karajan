@@ -1,0 +1,135 @@
+<project name="karajan" default="compile" basedir=".">
+
+	<property file="build.properties" />
+	<property file="${user.home}/build.properties" />
+
+
+
+	<property name="app.name" value="karajan" />
+	<property name="app.path" value="/${app.name}" />
+	<property name="build.home" value="${basedir}/build" />
+	<property name="dist.home" value="${basedir}/dist" />
+	<property name="docs.home" value="${basedir}/docs" />
+	<property name="src.home" value="${basedir}/src" />
+	<property name="lib.home" value="${basedir}/lib" />
+
+	<property name="compile.debug" value="true" />
+	<property name="compile.deprecation" value="false" />
+	<property name="compile.optimize" value="true" />
+
+
+
+	<path id="compile.classpath">
+		<fileset dir="${lib.home}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+
+	<!-- ==================== All Target ====================================== -->
+	<target name="all" depends="clean,compile" description="Clean build and dist directories, then compile" />
+
+	<!-- ==================== Clean Target ==================================== -->
+
+	<target name="clean" description="Delete old build and dist directories">
+		<delete dir="${build.home}" />
+		<delete dir="${dist.home}" />
+	</target>
+
+
+
+	<!-- ==================== Compile Target ================================== -->
+
+	<target name="compile" depends="prepare" description="Compile Java sources">
+		<!-- Compile Java classes as necessary -->
+		<mkdir dir="${build.home}" />
+		<javac srcdir="${src.home}" verbose="false" destdir="${build.home}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+
+
+	<!-- ==================== Dist Target ===================================== -->
+
+
+	<target name="dist" depends="compile" description="Create binary distribution">
+		<mkdir dir="${dist.home}" />
+		<!-- Copy documentation subdirectories -->
+
+		<tstamp />
+		<mkdir dir="${build.home}/META-INF" />
+		<manifest file="${build.home}/META-INF/MANIFEST.MF">
+			<attribute name="Built-By" value="${cvsroot}" />
+			<section name="common">
+				<attribute name="Specification-Title" value="${module}" />
+				<attribute name="Specification-Version" value="${tag}" />
+				<attribute name="Specification-Vendor" value="GICM" />
+				<attribute name="Date-Version" value="${TODAY} ${TSTAMP}" />
+			</section>
+		</manifest>
+<antcall target="confenv"></antcall>
+		<!-- Create application JAR file -->
+		<jar jarfile="${dist.home}/${app.name}.jar" basedir="${build.home}" manifest="${build.home}/META-INF/MANIFEST.MF" />
+
+		<!-- Copy additional files to ${dist.home} as necessary -->
+
+	</target>
+
+
+	<!-- ==================== Javadoc Target ================================== -->
+
+
+	<target name="javadoc" depends="compile" description="Create Javadoc API documentation">
+
+		<mkdir dir="${dist.home}/javadoc" />
+		<javadoc sourcepath="${src.home}" destdir="${dist.home}/javadoc" packagenames="*" >
+			<classpath refid="compile.classpath" />
+		</javadoc>
+
+	</target>
+
+
+
+	<!-- ==================== Prepare Target ================================== -->
+
+
+	<target name="prepare" depends="confenv">
+
+		<!-- Create build directories as needed -->
+		<mkdir dir="${build.home}" />
+
+		<!-- Copy static content of this web application -->
+		
+		<copy todir="${build.home}">
+			<fileset dir="${src.home}">
+				<exclude name="**/${app.env}-*" />
+				<exclude name="**/PROD-*" />
+				<exclude name="**/REC-*" />
+				<exclude name="**/DEV-*" />
+				<exclude name="**/INT-*" />
+			</fileset>
+		</copy>
+		<copy todir="${build.home}/conf">
+					<fileset dir="conf">
+						<exclude name="**/${app.env}-*" />
+						<exclude name="**/PROD-*" />
+						<exclude name="**/REC-*" />
+						<exclude name="**/DEV-*" />
+						<exclude name="**/INT-*" />
+					</fileset>
+				</copy>
+	</target>
+
+	<!-- ========================= Confenv Target ============================ -->
+
+	<!-- Recopie des fichiers propres a l'environnement cible  -->
+
+	<target name="confenv">		
+		<copy todir="${build.home}" overwrite="true" preservelastmodified="true">
+			<fileset dir="${src.home}" casesensitive="yes" />
+			<mapper type="regexp" from="^(.*)${app.env}-(.*)$$" to="\1\2" />
+		</copy>	
+	</target>
+</project>
