@@ -1,6 +1,18 @@
 =Utilisation=
 Création de classes d’action qui appelleront vos DAO (pouvant servir à de l’agrégation de données) et paramétrage du fichier XML de configuration. On peut placer plusieurs fichiers de configuration, seul le nom de l’unité d’œuvre doit être unique.
 
+Le répertoire contenant les fichiers de configuration doit être passé en paramètre du processeur de Karajan : 
+{{{
+ConfProcessor.configure(new File("/home/xavier/workspace/fileTestCamel/conf/");
+}}}
+
+Puis l'appel au moteur de mapping se passe ainsi : 
+{{{
+String request = "... some content ...";
+String result = ConfProcessor.unitsOfWork.get("Authentication").processFromString(request);
+}}}
+« Authentication » correspond au nom de l'unité d'œuvre.
+
 =Configuration=
 Voici quelques exemples : 
 {{{
