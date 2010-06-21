@@ -5,16 +5,22 @@ package fr.suravenir.karajan.helpers.readers;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import net.sf.json.JsonConfig;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.suravenir.karajan.helpers.Processor;
 import fr.suravenir.karajan.helpers.writers.Writable;
 import fr.suravenir.karajan.model.Field;
@@ -54,8 +60,11 @@ public class JSONReader implements Readable {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
-	private Object processBindingOnObject(UnitOfWork unitOfWork, JSON jsonObject, Object target) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private Object processBindingOnObject(UnitOfWork unitOfWork, JSON jsonObject, Object target) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
+			NoSuchMethodException {
 		for (final Field f : unitOfWork.getSourceArtifact().getDataBinding()) {
 			if (target instanceof JSONObject) {
 				((JSONObject) target).element(f.getTarget(), getSourceValue(f, jsonObject, unitOfWork));
@@ -74,8 +83,11 @@ public class JSONReader implements Readable {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
-	private List<Object> processBindingOnCollection(UnitOfWork unitOfWork, JSON jsonObject, Object target) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private List<Object> processBindingOnCollection(UnitOfWork unitOfWork, JSON jsonObject, Object target) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
+			SecurityException, NoSuchMethodException {
 		List<Object> targetList = new ArrayList<Object>();
 		for (final Field f : unitOfWork.getSourceArtifact().getDataBinding()) {
 			if (target instanceof JSONObject) {
@@ -96,10 +108,15 @@ public class JSONReader implements Readable {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
 	@SuppressWarnings("unchecked")
-	private Object processBinding(Object target, Field f, JSON jsonObject, UnitOfWork unitOfWork) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		for (final java.lang.reflect.Method m : target.getClass().getDeclaredMethods()) {
+	private Object processBinding(Object target, Field f, JSON jsonObject, UnitOfWork unitOfWork) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
+			SecurityException, NoSuchMethodException {
+		for (final Method m : target.getClass().getDeclaredMethods()) {
+
+			// TODO : gérer un type complexe du type du writer
 			if (m.getName().equalsIgnoreCase("set" + f.getTargetName())) {
 				switch (f.getTargetType()) {
 				case DOUBLE:
@@ -144,7 +161,17 @@ public class JSONReader implements Readable {
 							m.invoke(target, item);
 						}
 					}
+					break;
+				case MAP:
+					String[] map = f.getTargetName().split(".");
+					Method getter = target.getClass().getDeclaredMethod("get" + StringUtils.capitalize(map[0]), null);
 
+					Map<String, String> mapObj = (Map<String, String>) getter.invoke(target, null);
+					if (mapObj == null) {
+						mapObj = new HashMap<String, String>();
+						m.invoke(target, mapObj);
+					}
+					mapObj.put(map[1], getSourceValue(f, jsonObject, unitOfWork));
 					break;
 				}
 			}
