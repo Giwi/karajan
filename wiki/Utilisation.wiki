@@ -13,6 +13,9 @@ String result = ConfProcessor.unitsOfWork.get("Authentication").processFromStrin
 }}}
 « Authentication » correspond au nom de l'unité d'œuvre.
 
+=Principes=
+[http://giwi.free.fr/wp-content/gallery/imagesstock/imediator.png]
+
 =Configuration=
 Voici quelques exemples : 
 {{{
