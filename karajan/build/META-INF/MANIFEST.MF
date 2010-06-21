@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 16.3-b01 (Sun Microsystems Inc.)
+Built-By: ${cvsroot}
+
+Name: common
+Specification-Title: ${module}
+Specification-Version: ${tag}
+Specification-Vendor: GICM
+Date-Version: June 20 2010 0732
+
