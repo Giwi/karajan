@@ -27,7 +27,7 @@ Voici quelques exemples :
 Le nom (« name ») de cette unité d’œuvre doit être unique.
 
 ==Balise « input » :==
-Cette unité d’œuvre a une action d’entrée « authenticate », le format du message d’entrée est « json » (il pourrait être XML, CSV ou CRE), l’objet d’entrée (nom du message d’entrée) est « inputObject », il est décrit dans la section « dataObjects ». L’objet pivot connu du DAO est « outputObject », il est décrit dans la section « dataObjects ».
+Cette unité d’œuvre a une action d’entrée « authenticate », le format du message d’entrée est « json » (il pourrait être XML, CSV ou autre), l’objet d’entrée (nom du message d’entrée) est « inputObject », il est décrit dans la section « dataObjects ». L’objet pivot connu du DAO est « outputObject », il est décrit dans la section « dataObjects ».
 Cette balise a des balises fille « field » servant au mapping de données entre le message d’entrée et l’objet pivot d’entrée.
 
 ===Balise « field » dans le cas de « input »===
@@ -36,7 +36,7 @@ Cette balise a des balises fille « field » servant au mapping de données entr
   * « sourcetype » : nature de l’attribut (cf [DTD])
   * « target » : nom de l’objet pivot d’entrée
   * « targetName » : nom de l’attribut de l’objet pivot d’entrée
-  * « targetType » : nature de l’attribut (String, double, int, date, boolean)
+  * « targetType » : nature de l’attribut (cf [DTD])
 
 Les types complexes peuvent être définis ainsi : 
 {{{
@@ -53,10 +53,10 @@ Cette balise a des balises fille « field » servant au mapping de données entr
 ===Balise « field » dans le cas de « output »===
   * « source » : nom de l’objet pivot de sortie de l’action métier
   * « sourceName » : nom de l’attribut du l’objet pivot de sortie de l’action métier 
-  * « sourcetype » : nature de l’attribut (String, double, int, date, boolean)
+  * « sourcetype » : nature de l’attribut (cf [DTD])
   * « target » : nom du message de sortie
   * « targetName » : nom de l’attribut du message de sortie
-  * « targetType » : nature de l’attribut (String, double, int, date, boolean)
+  * « targetType » : nature de l’attribut (cf [DTD])
 
 Les types complexes peuvent être définis ainsi : 
 {{{
