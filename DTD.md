@@ -1,0 +1,43 @@
+
+```
+<!ELEMENT karajan (unitOfWork*) >
+<!ELEMENT unitOfWork (description?,input,output,dataObjects?)>
+
+<!ATTLIST unitOfWork
+   name CDATA #REQUIRED
+> 
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT input (field*)>
+<!ATTLIST input 
+	action CDATA #REQUIRED
+	inputObject CDATA #REQUIRED
+	outputObject CDATA #REQUIRED
+	format (xml|cre|json|csv) #REQUIRED
+>
+
+<!ELEMENT output (field*)>
+<!ATTLIST output
+	action CDATA #REQUIRED
+	inputObject CDATA #REQUIRED
+	outputObject CDATA #REQUIRED
+	format (xml|cre|json|csv) #REQUIRED
+>
+<!ELEMENT dataObjects (transObj*) >
+<!ELEMENT dataBinding (field+)>
+
+<!ELEMENT field EMPTY>
+<!ATTLIST field 
+	sourceName CDATA #REQUIRED
+	targetName CDATA #REQUIRED
+	source CDATA #REQUIRED
+	target CDATA #REQUIRED
+	sourceType (int|string|double|boolean|date|list|enumtype|map) #REQUIRED
+	targetType (int|string|double|boolean|date|list|enumtype|map) #REQUIRED
+>
+<!ELEMENT transObj EMPTY>
+<!ATTLIST transObj
+	name CDATA #REQUIRED
+	className CDATA #REQUIRED
+	isCollection (false|true) #REQUIRED
+>
+```
